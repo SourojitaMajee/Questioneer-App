@@ -10,14 +10,15 @@ import toast from "react-hot-toast";
 
 const Sidebar = () => {
   const queryClient = useQueryClient();
-  const{mutate:logout} = useMutation({
-    mutationFn: async() => {
+  const { mutate: logout } = useMutation({
+    mutationFn: async () => {
       try {
-        const res =await fetch("api/auth/logout",{
+        const res = await fetch("/api/auth/logout", {
           method: "POST",
-        })
+        });
         const data = await res.json();
-        if(!res.ok){
+
+        if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
         }
       } catch (error) {
@@ -27,12 +28,11 @@ const Sidebar = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
     },
-    onError: ()=>{
+    onError: () => {
       toast.error("Logout failed");
     },
-  })
-
-  const {data:authUser} = useQuery({queryKey: ["authUser"]});
+  });
+  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
 
   return (
     <div className='md:flex-[2_2_0] w-18 max-w-52'>
@@ -85,11 +85,12 @@ const Sidebar = () => {
                 <p className='text-white font-bold text-sm w-20 truncate'>{authUser?.fullName}</p>
                 <p className='text-slate-500 text-sm'>@{authUser?.username}</p>
               </div>
-              <BiLogOut className='w-5 h-5 cursor-pointer' 
-              onClick={(e) => {
-                e.preventDefault();
-                logout();
-              }}
+              <BiLogOut
+                className='w-5 h-5 cursor-pointer'
+                onClick={(e) => {
+                  e.preventDefault();
+                  logout();
+                }}
               />
             </div>
           </Link>

@@ -12,7 +12,7 @@ import { formatPostDate } from "../../utils/db/date/index.js";
 
 const Post = ({ post }) => {
   const [comment, setComment] = useState("");
-  const {data:authUser} = useQuery({queryKey: ["authUser"]});
+  const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const queryClient = useQueryClient();
   const postOwner = post.user;
   const isLiked = post.likes.includes(authUser._id);
@@ -21,15 +21,15 @@ const Post = ({ post }) => {
 
   const formattedDate = formatPostDate(post.createdAt);
 
-  const {mutate:deletePost, isPending: isDeleting } = useMutation({
+  const { mutate: deletePost, isPending: isDeleting } = useMutation({
     mutationFn: async () => {
       try {
-        const res = await fetch(`/api/posts/${post._id}`,{
+        const res = await fetch(`/api/posts/${post._id}`, {
           method: "DELETE",
         })
         const data = await res.json();
 
-        if(!res.ok){
+        if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
         }
         return data;
@@ -39,7 +39,7 @@ const Post = ({ post }) => {
     },
     onSuccess: () => {
       toast.success("Post deleted successfully");
-      queryClient.invalidateQueries({queryKey: ["posts"]});
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
     }
   });
 
@@ -107,18 +107,18 @@ const Post = ({ post }) => {
     },
   });
 
-  const handleDeletePost = () => { 
+  const handleDeletePost = () => {
     deletePost();
   };
 
   const handlePostComment = (e) => {
     e.preventDefault();
-    if(isCommenting) return;
+    if (isCommenting) return;
     commentPost();
   };
 
   const handleLikePost = () => {
-    if(isLiking) return;
+    if (isLiking) return;
     likePost();
   };
 
@@ -126,10 +126,17 @@ const Post = ({ post }) => {
     <>
       <div className='flex gap-2 items-start p-4 border-b border-gray-700'>
         <div className='avatar'>
-          <Link to={`/profile/${postOwner.username}`} className='w-8 rounded-full overflow-hidden'>
-            <img src={postOwner.profileImg || "/avatar-placeholder.png"} />
+          <Link to={`/profile/${postOwner.username}`} className='w-8 rounded-full'>
+            <div className="w-full h-full mask mask-circle">
+              <img
+                src={postOwner.profileImg || "/avatar-placeholder.png"}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </Link>
         </div>
+
         <div className='flex flex-col flex-1'>
           <div className='flex gap-2 items-center'>
             <Link to={`/profile/${postOwner.username}`} className='font-bold'>
@@ -143,7 +150,7 @@ const Post = ({ post }) => {
             {isMyPost && (
               <span className='flex justify-end flex-1'>
                 {!isDeleting && <FaTrash className='cursor-pointer hover:text-red-500' onClick={handleDeletePost} />}
-                {isDeleting && (<LoadingSpinner size="sm"/>)}
+                {isDeleting && (<LoadingSpinner size="sm" />)}
               </span>
             )}
           </div>
@@ -210,7 +217,7 @@ const Post = ({ post }) => {
                       onChange={(e) => setComment(e.target.value)}
                     />
                     <button className='btn btn-primary rounded-full btn-sm text-white px-4'>
-                      {isCommenting ? <LoadingSpinner />: "Post"}
+                      {isCommenting ? <LoadingSpinner /> : "Post"}
                     </button>
                   </form>
                 </div>
